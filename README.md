@@ -7,7 +7,7 @@ Get the same feel of Linux consoles with applications like screenfetch, neofetch
 <p align="center"><img width=80% height=80% src ="images/kali_screenfetch.png" /></p>
 
 #### Windows cmder console using PowerShell script
-<p align="center"><img width=80% height=80% src ="images/w10_cmderfetch.png" /></p>
+<p align="center"><img width=80% height=80% src ="images/w10_cmderfetch.PNG" /></p>
 
 ### Installation
 1- Download the latest version of cmder [HERE](https://cmder.net/)
