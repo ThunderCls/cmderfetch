@@ -1,0 +1,130 @@
+# Use this file to run your own startup commands
+
+## Prompt Customization
+<#
+.SYNTAX
+    <PrePrompt><CMDER DEFAULT>
+    Î» <PostPrompt> <repl input>
+.EXAMPLE
+    <PrePrompt>N:\Documents\src\cmder [master]
+    Î» <PostPrompt> |
+#>
+
+# helper functions
+function GetSystemDriveInfo()
+{
+	$volumes = get-wmiobject win32_diskdrive
+	foreach ($vol in $volumes) 
+	{
+		if($vol.DeviceID -eq '\\.\PHYSICALDRIVE0')
+		{
+			return $vol.Caption
+		}
+	}
+}
+# system info variables
+$oscaption = (Get-WMIObject win32_operatingsystem).Caption
+$osversion = (Get-WMIObject win32_operatingsystem).Version
+$osarch = (Get-WMIObject win32_operatingsystem).OSArchitecture
+$osinstall = ([WMI] "").ConvertToDateTime((Get-WMIObject win32_operatingsystem).InstallDate)
+$currenttime = ([WMI] "").ConvertToDateTime((Get-WMIObject win32_operatingsystem).LocalDateTime)
+$pcname = (Get-WMIObject win32_operatingsystem).CSName
+$username = (Get-WMIObject win32_computersystem).UserName.Split('\')[1]
+$workgroup = (Get-WMIObject win32_computersystem).Workgroup
+$oslang = (Get-WMIObject win32_operatingsystem).MUILanguages
+$cpuname = (Get-WMIObject win32_processor).Name
+$mainboardname = (Get-WMIObject win32_baseboard).Manufacturer + " " + (Get-WMIObject win32_baseboard).Product
+$mainboardmodel = (Get-WMIObject win32_computersystem).Manufacturer + " - " + (Get-WMIObject win32_computersystem).Model
+$biosname = (Get-WMIObject win32_bios).Manufacturer + " " + (Get-WMIObject win32_baseboard).Name + " " + (Get-WMIObject win32_baseboard).Version
+$ramcapacity = (Get-WMIObject win32_physicalmemory) | Measure-Object -Property capacity -sum | % {[math]::round(($_.sum / 1GB),2)}
+$raminfo = (get-wmiobject win32_physicalmemory)[0].Manufacturer + " " + $ramcapacity + "GB @" + (get-wmiobject win32_physicalmemory)[0].Speed + "MHz"
+$diskcapacity = (Get-WMIObject win32_diskdrive) | Measure-Object -Property size -sum | % {[math]::round(($_.sum / 1GB),2)}
+$diskinfo = GetSystemDriveInfo + " / Total HDD Capacity " + $diskcapacity + "GB"
+#$gpucapacity = (Get-WMIObject win32_videocontroller) | Measure-Object -Property adapterram -sum | % {[math]::round(($_.sum / 1GB),2)}
+$gpuinfo = (Get-WMIObject win32_videocontroller).Caption <#+ " " + $gpucapacity + "GB " + (Get-WMIObject win32_videocontroller).VideoModeDescription#>
+# colors
+$titlecolor = "Blue"
+$textcolor = "Gray"
+$logocolor = "Blue"
+
+# system info header
+Write-Host -ForegroundColor $logocolor -NoNewline "
+                                                            
+                                           *_:~rxTyeM        
+                            *-:<rxTyKMR8B#@@@@@@@@@@@`       
+            *_:~rxuwmMD8Bv  Z@@@@@@@@@@@@@@@@@@@@@@@@`       
+      !D8B#@@@@@@@@@@@@@@x  Z@@@@@@@@@@@@@@@@@@@@@@@@`       "
+Write-Host -ForegroundColor $logocolor $username -NoNewline
+Write-Host -ForegroundColor White "@" -NoNewline
+Write-Host -ForegroundColor $logocolor $pcname
+Write-Host -ForegroundColor $logocolor -NoNewline "      *@@@@@@@@@@@@@@@@@@x  Z@@@@@@@@@@@@@@@@@@@@@@@@`       " 
+Write-Host -ForegroundColor $titlecolor -NoNewline "System: " 
+Write-Host -ForegroundColor $textcolor $oscaption
+Write-Host -ForegroundColor $logocolor -NoNewline "      *@@@@@@@@@@@@@@@@@@x  Z@@@@@@@@@@@@@@@@@@@@@@@@`       "
+Write-Host -ForegroundColor $titlecolor -NoNewline "Version: " 
+Write-Host -ForegroundColor $textcolor $osversion
+Write-Host -ForegroundColor $logocolor -NoNewline "      *@@@@@@@@@@@@@@@@@@x  Z@@@@@@@@@@@@@@@@@@@@@@@@`       "
+Write-Host -ForegroundColor $titlecolor -NoNewline "Architecture: " 
+Write-Host -ForegroundColor $textcolor $osarch
+Write-Host -ForegroundColor $logocolor -NoNewline "      *@@@@@@@@@@@@@@@@@@x  Z@@@@@@@@@@@@@@@@@@@@@@@@`       "
+Write-Host -ForegroundColor $titlecolor -NoNewline "Install Date: " 
+Write-Host -ForegroundColor $textcolor $osinstall
+Write-Host -ForegroundColor $logocolor -NoNewline "      *@@@@@@@@@@@@@@@@@@x  Z@@@@@@@@@@@@@@@@@@@@@@@@`       "
+Write-Host -ForegroundColor $titlecolor -NoNewline "Current Date: " 
+Write-Host -ForegroundColor $textcolor $currenttime
+Write-Host -ForegroundColor $logocolor -NoNewline "      *@@@@@@@@@@@@@@@@@@x  Z@@@@@@@@@@@@@@@@@@@@@@@@`       "
+Write-Host -ForegroundColor $titlecolor -NoNewline "Host Name: " 
+Write-Host -ForegroundColor $textcolor $pcname
+Write-Host -ForegroundColor $logocolor -NoNewline "      =@DEDDERRRR66666OdO^  }dZZZMMMMMMMMMMWWWWGP3P3P       "
+Write-Host -ForegroundColor $titlecolor -NoNewline "Workgroup: " 
+Write-Host -ForegroundColor $textcolor $workgroup
+Write-Host -ForegroundColor $logocolor -NoNewline "                                                            "
+Write-Host -ForegroundColor $titlecolor -NoNewline "UserName: " 
+Write-Host -ForegroundColor $textcolor $username
+Write-Host -ForegroundColor $logocolor -NoNewline "      *@@@@@@@@@@@@@@@@@@]  Z@@@@@@@@@@@@@@@@@@@@@@@@`       "
+Write-Host -ForegroundColor $titlecolor -NoNewline "Language: " 
+Write-Host -ForegroundColor $textcolor $oslang
+Write-Host -ForegroundColor $logocolor -NoNewline "      *@@@@@@@@@@@@@@@@@@x  Z@@@@@@@@@@@@@@@@@@@@@@@@`       "
+Write-Host -ForegroundColor $titlecolor -NoNewline "CPU: " 
+Write-Host -ForegroundColor $textcolor $cpuname
+Write-Host -ForegroundColor $logocolor -NoNewline "      *@@@@@@@@@@@@@@@@@@x  Z@@@@@@@@@@@@@@@@@@@@@@@@`       "
+Write-Host -ForegroundColor $titlecolor -NoNewline "Motherboard: " 
+Write-Host -ForegroundColor $textcolor $mainboardname
+Write-Host -ForegroundColor $logocolor -NoNewline "      *@@@@@@@@@@@@@@@@@@x  Z@@@@@@@@@@@@@@@@@@@@@@@@`       "
+Write-Host -ForegroundColor $titlecolor -NoNewline "Model: " 
+Write-Host -ForegroundColor $textcolor $mainboardmodel
+Write-Host -ForegroundColor $logocolor -NoNewline "      *@@@@@@@@@@@@@@@@@@x  Z@@@@@@@@@@@@@@@@@@@@@@@@`       "
+Write-Host -ForegroundColor $titlecolor -NoNewline "RAM: " 
+Write-Host -ForegroundColor $textcolor $raminfo
+Write-Host -ForegroundColor $logocolor -NoNewline "      *@@@@@@@@@@@@@@@@@@x  Z@@@@@@@@@@@@@@@@@@@@@@@@`       "
+Write-Host -ForegroundColor $titlecolor -NoNewline "HDD: " 
+Write-Host -ForegroundColor $textcolor $diskinfo
+Write-Host -ForegroundColor $logocolor -NoNewline "      *@@@@@@@@@@@@@@@@@@x  Z@@@@@@@@@@@@@@@@@@@@@@@@`       "
+Write-Host -ForegroundColor $titlecolor -NoNewline "GPU: " 
+Write-Host -ForegroundColor $textcolor $gpuinfo
+Write-Host -ForegroundColor $logocolor -NoNewline "      *:~rx}yKMR8Q#@@@@@@x  Z@@@@@@@@@@@@@@@@@@@@@@@@`       "
+Write-Host -ForegroundColor $titlecolor -NoNewline "BIOS: " 
+Write-Host -ForegroundColor $textcolor $biosname
+Write-Host -ForegroundColor $logocolor -NoNewline "                    *-:~*,  (e5E8B#@@@@@@@@@@@@@@@@@@`       
+                                    *-:~*v}VeMRgQ#@@@`       
+                                                   *-        
+
+"
+
+[ScriptBlock]$PrePrompt = {
+
+}
+
+# Replace the cmder prompt entirely with this.
+ [ScriptBlock]$CmderPrompt = {
+    Write-Host $username"@"$pcname":" -NoNewline -ForegroundColor $textcolor
+    Write-Host "~" -NoNewline -ForegroundColor $logocolor
+    Write-Host "#" -NoNewline -ForegroundColor $textcolor
+ }
+
+[ScriptBlock]$PostPrompt = {
+
+}
+
+## <Continue to add your own>
+
